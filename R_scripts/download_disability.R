@@ -1,7 +1,3 @@
-#################################################################################
-#####                            Downloading the data                       #####
-#################################################################################
-
 if(!require(readstata13)) install.packages("discap.table", repos = "http://cran.us.r-project.org")
 
 # The data can be downloaded from the INEC's url at https://www.ecuadorencifras.gob.ec/documentos/web-inec/Estadisticas_Sociales/ENSANUT/ENSANUT_2018/BDD_ENSANUT_2018_STATA_.zip
@@ -31,3 +27,6 @@ unzip(tf, files=people.f.name,exdir=td, overwrite=TRUE)
 people.f.path <- file.path(td, people.f.name)
 # We name the "personas" dataset people
 people <- read.dta13(people.f.path)
+
+key.people <- data.frame(variable = names(people), # we can see the name of the variables
+                         label = attr(people,"var.labels"))
