@@ -37,6 +37,8 @@ levels(people$education) <- c("none", "none", "none", "primary", "primary", "sec
                               "tertiary", "tertiary", "tertiary")
 people$education <- factor(people$education, levels = c("none", "primary", "secondary", "tertiary"))
 
+levels(people$area) <- c("urban", "rural")
+
 index <- c("f1_s3_15", "f1_s3_16_2", "f1_s3_17", "f1_s3_18", "f1_s3_19", "f1_s3_20_2", "f1_s3_21", "f1_s3_22_2")
 people[, index] <- sapply(people[, index], function(x){ 
   x = ifelse(x == 999999 | is.na(x), 0, x)
@@ -48,6 +50,11 @@ people <- mutate(people, inc_business_owner = f1_s3_15 + f1_s3_16_2 - f1_s3_17,
                  inc_secondary = f1_s3_21 + f1_s3_22_2,
                  inc_total = inc_business_owner + inc_employed + inc_secondary)
 
+people$nonemployed <- case_when(is.na(f1_s3_1) ~ NA, as.integer(f1_s3_1) == 1 ~ FALSE, as.integer(f1_s3_2) != 12 ~ FALSE, 
+                                as.integer(f1_s3_3) == 1 ~ FALSE, TRUE ~ TRUE)
+
+personas$trabaja <- factor(personas$trabaja, levels = c("no", "si"))
+
 people$sick <- f1_s4_2 == "si"
 people$prev_med <- f1_s4_41 == "si"
 people$hospital <- f1_s4_54 == "si"
@@ -55,5 +62,10 @@ people$hospital <- f1_s4_54 == "si"
 people$good_health <- between(as.integer(f1_s4_58),1,3) 
 people$better_health <- as.integer(f1_s4_59) == 1
 
+people <- people %>% mutate(person = as.integer(persona), mother = f1_s2_15_1, father = f1_s2_14_1) %>% 
+  group_by(id_hogar) %>% mutate(n_child_mom = sapply(person, function(x) sum(mother %in% x, na.rm = TRUE)),
+                                n_child_dad = sapply(person, function(x) sum(father %in% x, na.rm = TRUE)),
+                                n_child = n_child_mom + n_child_dad)
 
 saveRDS(people, file = "rds_files/disability_ec.rds")
+
