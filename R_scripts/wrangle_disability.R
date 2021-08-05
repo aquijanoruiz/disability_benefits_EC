@@ -108,5 +108,5 @@ data <- select(people, id_hogar, id_per, fexp, sex, age, prov, area, ethnicity, 
                dis_type, dis_id, dis_id_percent, dis_manuela, dis_transfer, sick, prev_care, hospital, good_health, 
                better_health) %>% rename(weight = fexp)
 
-saveRDS(people, file = "rds_files/disability_ec.rds")
+saveRDS(data, file = "rds_files/disability_ec.rds")
 
