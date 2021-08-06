@@ -100,7 +100,7 @@ people$good_health <- between(as.integer(f1_s4_58),1,3)
 # good health -> true if the person considers themselves in better health than in the previous year
 people$better_health <- as.integer(f1_s4_59) == 1
 
-# -------------------- filtering the data --------------------
+# -------------------- exporting the data --------------------
 
 data <- select(people, id_hogar, id_per, fexp, sex, age, prov, area, ethnicity, education, marital_status, 
                n_child, inc_business_owner, inc_employed, inc_secondary, inc_total, bdh_transfer, nonemployed,
