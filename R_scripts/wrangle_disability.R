@@ -11,19 +11,19 @@ people <- mutate(people, vision = f1_s2_10_1, hearing = f1_s2_10_2, walking_stai
 index <- c("vision", "hearing", "walking_stairs", "cognitive", "bathing_dressing", "communication")
 people[,index] <- sapply(people[,index], FUN = as.integer)
 
-# disabled people -> true for anyone who answered 2 or above in the disability question
+# disabled people -> true if the person answered 2 or above in the disability question
 people$disabled <- !apply(people[,index], 1, function(x) max(x)) == 1
 
 # disability degree -> the maximum value among all kinds of disability
 people$dis_degree <- apply(people[,index], 1, function(x) max(x))
 people$dis_degree <- factor(people$dis_degree, levels = c("1", "2", "3", "4"))
 
+attach(people)
+
 # disability type -> the name of the disability with the maximum value among all kinds of disability
 set.seed(2525) # if there are two or more types of disability with the same value, one is chosen at random
 people$dis_type <- ifelse(!disabled, NA, colnames(people[,index])[max.col(people[,index], ties.method="random")])
 people$dis_type <- factor(people$dis_type, levels = index)
-
-attach(people)
 
 # disability id -> true if the person with disability has a disability id issued by the government
 people$dis_id <- case_when(is.na(disabled) | !disabled ~ NA, f1_s2_11 == "si" ~ TRUE, TRUE ~ FALSE)
@@ -43,7 +43,8 @@ people <- left_join(people, people %>% group_by(id_hogar) %>%
 # -------------------- sociodemographic variables --------------------
 
 # sex, age, area, ethnic identity, narital status, education
-people <- mutate(people, sex = sexo, age = edadanios, ethnicity = f1_s2_9, marital_status = f1_s2_16, education = f1_s2_19_1)
+people <- mutate(people, sex = sexo, age = edadanios, age_sqr = age^2, ethnicity = f1_s2_9, 
+                 marital_status = f1_s2_16, education = f1_s2_19_1)
 
 levels(people$sex) <- c("male", "female")
 levels(people$area) <- c("urban", "rural")
@@ -59,11 +60,16 @@ levels(people$education) <- c("none", "none", "none", "primary", "primary", "sec
                               "tertiary", "tertiary", "tertiary")
 people$education <- factor(people$education, levels = c("none", "primary", "secondary", "tertiary"))
 
-# number of children -> number of children a person has
-people <- people %>% mutate(person = as.integer(persona), mother = f1_s2_15_1, father = f1_s2_14_1) %>% 
+# number of children -> number of children above 18 a person has
+people <- people %>% mutate(person = as.integer(persona), 
+                            mother = ifelse(age <= 18, f1_s2_15_1, NA), 
+                            father = ifelse(age <= 18, f1_s2_14_1, NA)) %>% 
   group_by(id_hogar) %>% mutate(n_child_mom = sapply(person, function(x) sum(mother %in% x, na.rm = TRUE)),
                                 n_child_dad = sapply(person, function(x) sum(father %in% x, na.rm = TRUE)),
                                 n_child = n_child_mom + n_child_dad)
+
+people$n_child_cat <- as.factor(people$n_child) # transforms numeric into factor
+levels(people$n_child_cat) <- c("0", "1", "2", "3", "4", "5", rep("6ormore", 5))
 
 # -------------------- income variables --------------------
 
@@ -97,16 +103,15 @@ people$hospital <- f1_s4_54 == "si"
 # good health -> true if the person considers themselves in good, very good, or excellent health
 people$good_health <- between(as.integer(f1_s4_58),1,3)
 
-# good health -> true if the person considers themselves in better health than in the previous year
+# better health -> true if the person considers themselves in better health than in the previous year
 people$better_health <- as.integer(f1_s4_59) == 1
+detach(people)
 
 # -------------------- exporting the data --------------------
+disability_ec <- select(people, id_hogar, id_per, fexp, sex, age, age_sqr, prov, area, ethnicity, education, marital_status, 
+                        n_child, n_child_cat, inc_business_owner, inc_employed, inc_secondary, inc_total, bdh_transfer, nonemployed,
+                        vision, hearing, walking_stairs, cognitive, bathing_dressing, communication, disabled, dis_degree, 
+                        dis_type, dis_id, dis_id_percent, dis_manuela, dis_transfer, sick, prev_care, hospital, good_health, 
+                        better_health) %>% rename(weight = fexp) %>% filter(disabled == TRUE)
 
-data <- select(people, id_hogar, id_per, fexp, sex, age, prov, area, ethnicity, education, marital_status, 
-               n_child, inc_business_owner, inc_employed, inc_secondary, inc_total, bdh_transfer, nonemployed,
-               vision, hearing, walking_stairs, cognitive, bathing_dressing, communication, disabled, dis_degree, 
-               dis_type, dis_id, dis_id_percent, dis_manuela, dis_transfer, sick, prev_care, hospital, good_health, 
-               better_health) %>% rename(weight = fexp)
-
-saveRDS(data, file = "rds_files/disability_ec.rds")
-
+saveRDS(disability_ec, file = "rds_files/disability_ec.rds")
