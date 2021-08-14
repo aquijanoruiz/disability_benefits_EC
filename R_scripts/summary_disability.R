@@ -44,6 +44,8 @@ for(i in var){ # loop that fills the matrix
 colnames(all_dis_id) <- c("all_id_holder", "all_non_id_holder", "male_id_holder", 
                           "male_non_id_holder", "female_id_holder", "female_non_id_holder")
 
+saveRDS(all_dis_id, file = "rds_files/table1_all_dis_id.rds")
+
 # -------------------- id holders disability percentage summary statistics --------------------
 
 sum(disability_ec$dis_id == TRUE) # number of people with disability id
