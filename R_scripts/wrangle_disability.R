@@ -121,4 +121,4 @@ disability_ec <- disability_ec[is.na(disability_ec$dis_id_percent) | between(dis
 # removes people aged under 5
 disability_ec <- disability_ec[disability_ec$age >= 5,]
   
-# saveRDS(disability_ec, file = "rds_files/disability_ec.rds")
+saveRDS(disability_ec, file = "rds_files/disability_ec.rds")
