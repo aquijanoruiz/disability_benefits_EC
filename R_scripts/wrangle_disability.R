@@ -19,8 +19,8 @@ people$dis_type <- ifelse(!people$disabled, NA, colnames(people[,index])[max.col
 people$dis_type <- factor(people$dis_type, levels = index)
 
 # disability degree -> the highest value (1 to 4) among all types of disability
-people$dis_degree <- apply(people[,index], 1, function(x) max(x))
-people$dis_degree <- factor(people$dis_degree, levels = c("1", "2", "3", "4"))
+people$dis_perception <- apply(people[,index], 1, function(x) max(x))
+people$dis_perception <- factor(people$dis_perception, levels = c("1", "2", "3", "4"))
 
 # disability id -> true if the person with disability has a disability id
 people$dis_id <- case_when(is.na(people$disabled) | !people$disabled ~ NA, people$f1_s2_11 == "si" ~ TRUE, TRUE ~ FALSE)
@@ -114,7 +114,7 @@ people <- mutate(people, inc_business_owner = f1_s3_15 + f1_s3_16_2 - f1_s3_17, 
 disability_ec <- 
   select(people, id_hogar, id_per, fexp, sex, age, age_sqr, prov, area, ethnicity, education, marital_status, n_child, 
          n_child_cat, inc_business_owner, inc_employed, inc_secondary, inc_total, bdh_transfer, nonemployed, vision, 
-         hearing, walking_stairs, cognitive, bathing_dressing, communication, disabled, dis_degree, dis_type, dis_id, 
+         hearing, walking_stairs, cognitive, bathing_dressing, communication, disabled, dis_perception, dis_type, dis_id, 
          dis_id_percent, dis_id_percent_cat, dis_manuela, dis_transfer, sick, prev_care, hospital, good_health, 
          better_health) %>% rename(weight = fexp) %>% filter(disabled == TRUE)
 
