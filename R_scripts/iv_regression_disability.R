@@ -17,11 +17,11 @@ ols1_males <- lm(nonemployed ~ dis_id + as.factor(age) + education + marital_sta
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # ols 2 -> males + self assessment of the impairment
-ols2_males <- lm(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+ols2_males <- lm(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # ols 3 -> males + self assessment of the impairment + type of disability
-ols3_males <- lm(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+ols3_males <- lm(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
@@ -30,11 +30,11 @@ ols1_females <- lm(nonemployed ~ dis_id + as.factor(age) + education + marital_s
                  data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # ols 2 -> males + self assessment of the impairment
-ols2_females <- lm(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+ols2_females <- lm(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                  data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # ols 3 -> males + self assessment of the impairment + type of disability
-ols3_females <- lm(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+ols3_females <- lm(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                  data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 var_names <- c("Id holder", "Very difficult", "Extremely difficult", "Hearing", "Walking or walking up stars", 
@@ -46,7 +46,7 @@ controls <- list(c("Age controls", "Yes","Yes", "Yes", "Yes","Yes", "Yes"),
                  c("Num of children controls", "Yes","Yes", "Yes", "Yes","Yes", "Yes"))
 
 stargazer(ols1_males, ols2_males, ols3_males, ols1_females, ols2_females, ols3_females, type = "text", align = TRUE, 
-          keep = c("dis_id", "dis_degree", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f"),
           dep.var.caption = "Dependent variable: non-employment", dep.var.labels.include = FALSE,
           add.lines = controls, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "OLS regressions: relationship between disability benefits and non-employment")
@@ -59,11 +59,11 @@ fs1_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_stat
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # first stage 2 -> males + self assessment of the impairment
-fs2_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+fs2_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # first stage 3 -> males + self assessment of the impairment + type of disability
-fs3_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+fs3_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
@@ -72,11 +72,11 @@ fs1_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_st
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # first stage 2 -> males + self assessment of the impairment
-fs2_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+fs2_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # first stage 3 -> males + self assessment of the impairment + type of disability
-fs3_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+fs3_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "text", align = TRUE, 
@@ -91,29 +91,29 @@ stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females
 iv1_males <- ivreg(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat | 
                      as.factor(age) + education + marital_status + n_child_cat + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
-iv2_males <- ivreg(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree | 
-                     as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
+iv2_males <- ivreg(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception | 
+                     as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
-iv3_males <- ivreg(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type | 
-                     as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
+iv3_males <- ivreg(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type | 
+                     as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
 iv1_females <- ivreg(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat | 
                        as.factor(age) + education + marital_status + n_child_cat + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
-iv2_females <- ivreg(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree | 
-                       as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
+iv2_females <- ivreg(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception | 
+                       as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
-iv3_females <- ivreg(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type | 
-                       as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
+iv3_females <- ivreg(nonemployed ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type | 
+                       as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females, type = "text", align = TRUE, 
-          keep = c("dis_id", "dis_degree", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "IV model: effects of disability benefits on non-employment")
 
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "text", align = TRUE, 
-          keep = c("dis_manuela", "dis_degree", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
+          keep = c("dis_manuela", "dis_perception", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
           omit.stat = c("LL","ser","f", "rsq"), dep.var.caption = "", dep.var.labels.include = FALSE, 
           column.labels = c("Men", "Women"), column.separate = c(3,3), title = "")
 
@@ -130,11 +130,11 @@ ols1_males <- lm(sick ~ dis_id + as.factor(age) + education + marital_status + n
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # ols 2 -> males + self assessment of the impairment
-ols2_males <- lm(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+ols2_males <- lm(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # ols 3 -> males + self assessment of the impairment + type of disability
-ols3_males <- lm(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+ols3_males <- lm(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
@@ -143,11 +143,11 @@ ols1_females <- lm(sick ~ dis_id + as.factor(age) + education + marital_status +
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # ols 2 -> males + self assessment of the impairment
-ols2_females <- lm(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+ols2_females <- lm(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # ols 3 -> males + self assessment of the impairment + type of disability
-ols3_females <- lm(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+ols3_females <- lm(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 var_names <- c("Id holder", "Very difficult", "Extremely difficult", "Hearing", "Walking or walking up stars", 
@@ -159,7 +159,7 @@ controls <- list(c("Age controls", "Yes","Yes", "Yes", "Yes","Yes", "Yes"),
                  c("Num of children controls", "Yes","Yes", "Yes", "Yes","Yes", "Yes"))
 
 stargazer(ols1_males, ols2_males, ols3_males, ols1_females, ols2_females, ols3_females, type = "text", align = TRUE, 
-          keep = c("dis_id", "dis_degree", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f"),
           dep.var.caption = "Dependent variable: sick in the last 30 days", dep.var.labels.include = FALSE,
           add.lines = controls, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "OLS regressions: relationship between disability benefits and being sick in the last 30 days")
@@ -172,11 +172,11 @@ fs1_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_stat
                 data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # first stage 2 -> males + self assessment of the impairment
-fs2_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+fs2_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                 data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # first stage 3 -> males + self assessment of the impairment + type of disability
-fs3_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+fs3_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                 data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
@@ -185,11 +185,11 @@ fs1_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_st
                   data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # first stage 2 -> males + self assessment of the impairment
-fs2_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+fs2_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                   data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # first stage 3 -> males + self assessment of the impairment + type of disability
-fs3_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+fs3_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                   data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "text", align = TRUE, 
@@ -204,29 +204,29 @@ stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females
 iv1_males <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat | 
                      as.factor(age) + education + marital_status + n_child_cat + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
-iv2_males <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree | 
-                     as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
+iv2_males <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception | 
+                     as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
-iv3_males <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type | 
-                     as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
+iv3_males <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type | 
+                     as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
 iv1_females <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat | 
                        as.factor(age) + education + marital_status + n_child_cat + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
-iv2_females <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree | 
-                       as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
+iv2_females <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception | 
+                       as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
-iv3_females <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type | 
-                       as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
+iv3_females <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type | 
+                       as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females, type = "text", align = TRUE, 
-          keep = c("dis_id", "dis_degree", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "IV model: effects of disability benefits on being sick in the last 30 days")
 
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "text", align = TRUE, 
-          keep = c("dis_manuela", "dis_degree", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
+          keep = c("dis_manuela", "dis_perception", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
           omit.stat = c("LL","ser","f", "rsq"), dep.var.caption = "", dep.var.labels.include = FALSE, 
           column.labels = c("Men", "Women"), column.separate = c(3,3), title = "")
 
@@ -243,11 +243,11 @@ ols1_males <- lm(prev_care ~ dis_id + as.factor(age) + education + marital_statu
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # ols 2 -> males + self assessment of the impairment
-ols2_males <- lm(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+ols2_males <- lm(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # ols 3 -> males + self assessment of the impairment + type of disability
-ols3_males <- lm(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+ols3_males <- lm(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
@@ -256,11 +256,11 @@ ols1_females <- lm(prev_care ~ dis_id + as.factor(age) + education + marital_sta
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # ols 2 -> males + self assessment of the impairment
-ols2_females <- lm(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+ols2_females <- lm(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # ols 3 -> males + self assessment of the impairment + type of disability
-ols3_females <- lm(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+ols3_females <- lm(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 var_names <- c("Id holder", "Very difficult", "Extremely difficult", "Hearing", "Walking or walking up stars", 
@@ -272,7 +272,7 @@ controls <- list(c("Age controls", "Yes","Yes", "Yes", "Yes","Yes", "Yes"),
                  c("Num of children controls", "Yes","Yes", "Yes", "Yes","Yes", "Yes"))
 
 stargazer(ols1_males, ols2_males, ols3_males, ols1_females, ols2_females, ols3_females, type = "text", align = TRUE, 
-          keep = c("dis_id", "dis_degree", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f"),
           dep.var.caption = "Dependent variable: preventive care in the last 30 days", dep.var.labels.include = FALSE,
           add.lines = controls, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "OLS regressions: relationship between disability benefits and being prev_care in the last 30 days")
@@ -285,11 +285,11 @@ fs1_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_stat
                 data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # first stage 2 -> males + self assessment of the impairment
-fs2_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+fs2_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                 data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # first stage 3 -> males + self assessment of the impairment + type of disability
-fs3_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+fs3_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                 data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
@@ -298,11 +298,11 @@ fs1_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_st
                   data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # first stage 2 -> males + self assessment of the impairment
-fs2_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+fs2_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                   data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # first stage 3 -> males + self assessment of the impairment + type of disability
-fs3_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+fs3_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                   data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "text", align = TRUE, 
@@ -317,29 +317,29 @@ stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females
 iv1_males <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat | 
                      as.factor(age) + education + marital_status + n_child_cat + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
-iv2_males <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree | 
-                     as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
+iv2_males <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception | 
+                     as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
-iv3_males <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type | 
-                     as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
+iv3_males <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type | 
+                     as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
 iv1_females <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat | 
                        as.factor(age) + education + marital_status + n_child_cat + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
-iv2_females <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree | 
-                       as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
+iv2_females <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception | 
+                       as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
-iv3_females <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type | 
-                       as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
+iv3_females <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type | 
+                       as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females, type = "text", align = TRUE, 
-          keep = c("dis_id", "dis_degree", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "IV model: effects of disability benefits on preventive care in the last 30 days")
 
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "text", align = TRUE, 
-          keep = c("dis_manuela", "dis_degree", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
+          keep = c("dis_manuela", "dis_perception", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
           omit.stat = c("LL","ser","f", "rsq"), dep.var.caption = "", dep.var.labels.include = FALSE, 
           column.labels = c("Men", "Women"), column.separate = c(3,3), title = "")
 
@@ -356,11 +356,11 @@ ols1_males <- lm(good_health ~ dis_id + as.factor(age) + education + marital_sta
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # ols 2 -> males + self assessment of the impairment
-ols2_males <- lm(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+ols2_males <- lm(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # ols 3 -> males + self assessment of the impairment + type of disability
-ols3_males <- lm(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+ols3_males <- lm(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                  data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
@@ -369,11 +369,11 @@ ols1_females <- lm(good_health ~ dis_id + as.factor(age) + education + marital_s
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # ols 2 -> males + self assessment of the impairment
-ols2_females <- lm(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+ols2_females <- lm(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # ols 3 -> males + self assessment of the impairment + type of disability
-ols3_females <- lm(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+ols3_females <- lm(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                    data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 var_names <- c("Id holder", "Very difficult", "Extremely difficult", "Hearing", "Walking or walking up stars", 
@@ -385,7 +385,7 @@ controls <- list(c("Age controls", "Yes","Yes", "Yes", "Yes","Yes", "Yes"),
                  c("Num of children controls", "Yes","Yes", "Yes", "Yes","Yes", "Yes"))
 
 stargazer(ols1_males, ols2_males, ols3_males, ols1_females, ols2_females, ols3_females, type = "text", align = TRUE, 
-          keep = c("dis_id", "dis_degree", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f"),
           dep.var.caption = "Dependent variable: considers herself in good health", dep.var.labels.include = FALSE,
           add.lines = controls, column.labels = c("Men", "Women"), column.separate = c(3,3))
 
@@ -397,11 +397,11 @@ fs1_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_stat
                 data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # first stage 2 -> males + self assessment of the impairment
-fs2_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+fs2_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                 data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # first stage 3 -> males + self assessment of the impairment + type of disability
-fs3_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+fs3_males <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                 data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
@@ -410,11 +410,11 @@ fs1_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_st
                   data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # first stage 2 -> males + self assessment of the impairment
-fs2_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree, 
+fs2_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception, 
                   data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 # first stage 3 -> males + self assessment of the impairment + type of disability
-fs3_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type, 
+fs3_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type, 
                   data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "text", align = TRUE, 
@@ -429,29 +429,29 @@ stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females
 iv1_males <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat | 
                      as.factor(age) + education + marital_status + n_child_cat + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
-iv2_males <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree | 
-                     as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
+iv2_males <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception | 
+                     as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
-iv3_males <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type | 
-                     as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
+iv3_males <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type | 
+                     as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "male"), weights = weight)
 
 # FEMALES
 iv1_females <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat | 
                        as.factor(age) + education + marital_status + n_child_cat + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
-iv2_females <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree | 
-                       as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
+iv2_females <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception | 
+                       as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
-iv3_females <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type | 
-                       as.factor(age) + education + marital_status + n_child_cat + dis_degree + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
+iv3_females <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type | 
+                       as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females, type = "text", align = TRUE, 
-          keep = c("dis_id", "dis_degree", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "IV model: effects of disability benefits on health perception")
 
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "text", align = TRUE, 
-          keep = c("dis_manuela", "dis_degree", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
+          keep = c("dis_manuela", "dis_perception", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
           omit.stat = c("LL","ser","f", "rsq"), dep.var.caption = "", dep.var.labels.include = FALSE, 
           column.labels = c("Men", "Women"), column.separate = c(3,3), title = "")
 
