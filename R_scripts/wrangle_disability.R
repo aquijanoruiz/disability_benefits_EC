@@ -37,15 +37,18 @@ people$dis_id_percent_cat <- factor(people$dis_id_percent_cat, levels = c("30-39
 # Mision Manuela Espejo -> true if the person with disability was visited by Mision Manuela Espejo
 people$dis_manuela <- case_when(is.na(people$disabled) | !people$disabled ~ NA, people$f1_s2_13 == "si" ~ TRUE, TRUE ~ FALSE)
 
-# disability transfer -> true if anyone in the household receives disability transfers
+# disability transfer -> true if anyone in the household receives disability transfers and the person has a disability id 
+people <- left_join(people, people %>% group_by(id_hogar) %>% 
+                      summarize(dis_transfer = any(f1_s3_29 == "si", na.rm = TRUE)), by = "id_hogar")
+people$dis_transfer <- people$dis_id & people$dis_transfer
+
 # bdh transfer -> true if anyone in the household receives cash transfers (bono de desarrollo humano)
 people <- left_join(people, people %>% group_by(id_hogar) %>% 
-                      summarize(dis_transfer = any(f1_s3_29 == "si", na.rm = TRUE),
-                                bdh_transfer = any(f1_s3_27 == "si", na.rm = TRUE)), by = "id_hogar")
+                      summarize(bdh_transfer = any(f1_s3_27 == "si", na.rm = TRUE)), by = "id_hogar")
 
 # -------------------- outcome variables --------------------
 
-# unemployed -> true if the person did not do any job the previous week and does not have any job to return to
+# nonemployed -> true if the person did not do any job the previous week and does not have any job to return to
 people$nonemployed <- with(people, case_when(is.na(f1_s3_1) ~ NA, as.integer(f1_s3_1) == 1 ~ FALSE, 
   as.integer(f1_s3_2) != 12 ~ FALSE, as.integer(f1_s3_3) == 1 ~ FALSE, TRUE ~ TRUE))
 
@@ -66,13 +69,18 @@ people$better_health <- as.integer(people$f1_s4_59) == 1
 
 # -------------------- sociodemographic variables --------------------
 
-# sex, age, area, ethnic identity, narital status, education
-people <- mutate(people, sex = sexo, age = edadanios, age_sqr = age^2, ethnicity = f1_s2_9, 
+# sex, age, area, ethnic identity, marital status, education
+people <- mutate(people, province = as.factor(prov), sex = sexo, age = edadanios, ethnicity = f1_s2_9, 
                  marital_status = f1_s2_16, education = f1_s2_19_1)
+
+levels(people$province) <- 
+  c("Azuay", "Bolivar", "Cañar", "Carchi", "Cotopaxi", "Chimborazo", "El Oro", "Esmeraldas", "Guayas", 
+    "Imbabura", "Loja", "Los Rios", "Manabi", "Morona Santiago", "Napo", "Pastaza", "Pichincha", 
+    "Tungurahua", "Zamora Chinchipe", "Galápagos", "Sucumbios", "Orellana", "Santo Domingo de los Tsáchilas", 
+    "Santa Elena", "Zona no delimitada")
 
 levels(people$sex) <- c("male", "female")
 levels(people$area) <- c("urban", "rural")
-
 levels(people$ethnicity) <-  c("indigenous", "black", "black", "mestizo", "mestizo", "mestizo", "white", "mestizo")
 people$ethnicity <- factor(people$ethnicity, levels = c("mestizo", "white", "black", "indigenous"))
 
@@ -112,7 +120,7 @@ people <- mutate(people, inc_business_owner = f1_s3_15 + f1_s3_16_2 - f1_s3_17, 
 # -------------------- selecting the data --------------------
 
 disability_ec <- 
-  select(people, id_hogar, id_per, fexp, sex, age, age_sqr, prov, area, ethnicity, education, marital_status, n_child, 
+  select(people, province, id_hogar, id_per, fexp, sex, age, area, ethnicity, education, marital_status, n_child, 
          n_child_cat, inc_business_owner, inc_employed, inc_secondary, inc_total, bdh_transfer, nonemployed, vision, 
          hearing, walking_stairs, cognitive, bathing_dressing, communication, disabled, dis_perception, dis_type, dis_id, 
          dis_id_percent, dis_id_percent_cat, dis_manuela, dis_transfer, sick, prev_care, hospital, good_health, 
@@ -126,4 +134,9 @@ disability_ec <- disability_ec[is.na(disability_ec$dis_id_percent) | between(dis
 # removes people aged under 5
 disability_ec <- disability_ec[disability_ec$age >= 5,]
   
+# -------------------- saving the data into rds and dta --------------------
+
 saveRDS(disability_ec, file = "rds_files/disability_ec.rds")
+
+if(!require(foreign)) install.packages("foreign", repos = "http://cran.us.r-project.org")
+write.dta(disability_ec, file = "rds_files/disability_ec.dta")
