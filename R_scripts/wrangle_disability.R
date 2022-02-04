@@ -68,16 +68,19 @@ people$good_health <- between(as.integer(people$f1_s4_58),1,3)
 people$better_health <- as.integer(people$f1_s4_59) == 1
 
 # -------------------- sociodemographic variables --------------------
-
-# sex, age, area, ethnic identity, marital status, education
-people <- mutate(people, province = as.factor(prov), sex = sexo, age = edadanios, ethnicity = f1_s2_9, 
-                 marital_status = f1_s2_16, education = f1_s2_19_1)
+# geographic conglomeration (province, canton, parish, and conglomerate)
+people <- mutate(people, province = factor(prov), canton = factor(substr(upm, 1, 4)),
+                 parish = factor(substr(upm, 1, 6)), conglomerate = factor(upm))
 
 levels(people$province) <- 
   c("Azuay", "Bolivar", "Cañar", "Carchi", "Cotopaxi", "Chimborazo", "El Oro", "Esmeraldas", "Guayas", 
     "Imbabura", "Loja", "Los Rios", "Manabi", "Morona Santiago", "Napo", "Pastaza", "Pichincha", 
     "Tungurahua", "Zamora Chinchipe", "Galápagos", "Sucumbios", "Orellana", "Santo Domingo de los Tsáchilas", 
     "Santa Elena", "Zona no delimitada")
+
+# sex, age, area, ethnic identity, marital status, education
+people <- mutate(people, sex = sexo, age = edadanios, ethnicity = f1_s2_9, 
+                 marital_status = f1_s2_16, education = f1_s2_19_1)
 
 levels(people$sex) <- c("male", "female")
 levels(people$area) <- c("urban", "rural")
@@ -103,6 +106,20 @@ people <- people %>% mutate(person = as.integer(persona),
 people$n_child_cat <- as.factor(people$n_child) # transforms numeric into factor
 levels(people$n_child_cat) <- c("0", "1", "2", "3", "4", "5", rep("6ormore", 5))
 
+# home characteristics
+home$floor <- factor(home$f1_s1_3)
+levels(home$floor) <- c("Ceramic tile, stone, vinyl, marble, faux marble, treated planks, or concrete slab",
+                        "Ceramic tile, stone, vinyl, marble, faux marble, treated planks, or concrete slab",
+                        "Ceramic tile, stone, vinyl, marble, faux marble, treated planks, or concrete slab",
+                        "cement, bricks", "untreated planks, reed, other", "untreated planks, reed, other", 
+                        "dirt", "untreated planks, reed, other")
+
+home$shower <- factor(home$f1_s1_12)
+levels(home$shower) <- c("private","shared","does not own")
+
+home$toilet <- factor(home$f1_s1_20)
+levels(home$toilet) <- c("inside", "outside", "outside")
+
 # -------------------- income  --------------------
 
 # income is calculated as someones income as a business owner and employed worker in the previous month
@@ -120,19 +137,22 @@ people <- mutate(people, inc_business_owner = f1_s3_15 + f1_s3_16_2 - f1_s3_17, 
 # -------------------- selecting the data --------------------
 
 disability_ec <- 
-  select(people, province, id_hogar, id_per, fexp, sex, age, area, ethnicity, education, marital_status, n_child, 
-         n_child_cat, inc_business_owner, inc_employed, inc_secondary, inc_total, bdh_transfer, nonemployed, vision, 
-         hearing, walking_stairs, cognitive, bathing_dressing, communication, disabled, dis_perception, dis_type, dis_id, 
-         dis_id_percent, dis_id_percent_cat, dis_manuela, dis_transfer, sick, prev_care, hospital, good_health, 
-         better_health) %>% rename(weight = fexp) %>% filter(disabled == TRUE)
+  select(people, province, canton, parish, conglomerate, id_hogar, id_per, fexp, sex, age, area, ethnicity, education, 
+         marital_status, n_child, n_child_cat, inc_business_owner, inc_employed, inc_secondary, inc_total, bdh_transfer, 
+         nonemployed, vision, hearing, walking_stairs, cognitive, bathing_dressing, communication, disabled, dis_perception, 
+         dis_type, dis_id, dis_id_percent, dis_id_percent_cat, dis_manuela, dis_transfer, sick, prev_care, hospital, 
+         good_health, better_health) %>% rename(weight = fexp)
+
+disability_ec <- left_join(disability_ec, select(home, id_hogar, floor, shower, toilet), by = "id_hogar")
+disability_ec <- filter(disability_ec, disabled == TRUE) # selects only people with disability
+disability_ec <- disability_ec[disability_ec$age >= 5,] # removes people aged under 5
 
 # -------------------- removing errors --------------------
 
 # removes people with disability percentage below 30 or above 100
 disability_ec <- disability_ec[is.na(disability_ec$dis_id_percent) | between(disability_ec$dis_id_percent,30,100),]
 
-# removes people aged under 5
-disability_ec <- disability_ec[disability_ec$age >= 5,]
+
   
 # -------------------- saving the data into rds and dta --------------------
 
