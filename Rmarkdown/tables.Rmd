@@ -151,7 +151,7 @@ fs3_females <- lm(dis_id ~ dis_manuela + as.factor(age) + education + marital_st
 # -------------------- IV regression table --------------------
 
 iv <- stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females, type = "latex", align = TRUE, 
-          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f","rsq"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "IV model: effects of disability benefits on non-employment")
 ```
@@ -159,7 +159,7 @@ iv <- stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_f
 ```{r, echo=FALSE, results='asis'}
 fs <- stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "latex", align = TRUE, 
                keep = c("dis_manuela", "dis_perception", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
-               omit.stat = c("LL","ser","f"), dep.var.caption = "", dep.var.labels.include = FALSE, 
+               omit.stat = c("LL","ser"), dep.var.caption = "", dep.var.labels.include = FALSE, 
                column.labels = c("Men", "Women"), column.separate = c(3,3), title = "")
 ```
 
@@ -257,7 +257,7 @@ iv3_females <- ivreg(sick ~ dis_id + as.factor(age) + education + marital_status
                        as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females, type = "latex", align = TRUE, 
-          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser", "rsq"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "IV model: effects of disability benefits on being sick in the last 30 days")
 ```
@@ -265,13 +265,13 @@ stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females
 ```{r, echo=FALSE, results='asis'}
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "latex", align = TRUE, 
           keep = c("dis_manuela", "dis_perception", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
-          omit.stat = c("LL","ser","f", "rsq"), dep.var.caption = "", dep.var.labels.include = FALSE, 
+          omit.stat = c("LL","ser"), dep.var.caption = "", dep.var.labels.include = FALSE, 
           column.labels = c("Men", "Women"), column.separate = c(3,3), title = "")
 ```
 
 ```{r, echo=FALSE, results='asis'}
 stargazer(ols1_males, ols2_males, ols3_males, ols1_females, ols2_females, ols3_females, type = "latex", align = TRUE, 
-          keep = c("dis_id"), covariate.labels = c("Id holder"), omit.stat = c("LL","ser","f", "rsq"),
+          keep = c("dis_id"), covariate.labels = c("Id holder"), omit.stat = c("LL","ser"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3))
 ```
 
@@ -359,7 +359,7 @@ iv3_females <- ivreg(prev_care ~ dis_id + as.factor(age) + education + marital_s
                        as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females, type = "latex", align = TRUE, 
-          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "IV model: effects of disability benefits on preventive care in the last 30 days")
 ```
@@ -368,7 +368,7 @@ stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females
 
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "latex", align = TRUE, 
           keep = c("dis_manuela", "dis_perception", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
-          omit.stat = c("LL","ser","f", "rsq"), dep.var.caption = "", dep.var.labels.include = FALSE, 
+          omit.stat = c("LL","ser"), dep.var.caption = "", dep.var.labels.include = FALSE, 
           column.labels = c("Men", "Women"), column.separate = c(3,3), title = "")
 
 ```
@@ -376,7 +376,7 @@ stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females
 ```{r, echo=FALSE, results='asis'}
 
 stargazer(ols1_males, ols2_males, ols3_males, ols1_females, ols2_females, ols3_females, type = "latex", align = TRUE, 
-          keep = c("dis_id"), covariate.labels = c("Id holder"), omit.stat = c("LL","ser","f", "rsq"),
+          keep = c("dis_id"), covariate.labels = c("Id holder"), omit.stat = c("LL","ser"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3))
 ```
 
@@ -463,7 +463,7 @@ iv3_females <- ivreg(good_health ~ dis_id + as.factor(age) + education + marital
                        as.factor(age) + education + marital_status + n_child_cat + dis_perception + dis_type + dis_manuela, data = disability_ec %>% filter(sex == "female"), weights = weight)
 
 stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females, type = "latex", align = TRUE, 
-          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser","f", "rsq"),
+          keep = c("dis_id", "dis_perception", "dis_type"), covariate.labels = var_names, omit.stat = c("LL","ser"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3),
           title = "IV model: effects of disability benefits on health perception")
 ```
@@ -471,13 +471,13 @@ stargazer(iv1_males, iv2_males, iv3_males, iv1_females, iv2_females, iv3_females
 ```{r, echo=FALSE, results='asis'}
 stargazer(fs1_males, fs2_males, fs3_males, fs1_females, fs2_females, fs3_females, type = "latex", align = TRUE, 
           keep = c("dis_manuela", "dis_perception", "dis_type"), covariate.labels = c("Mision Manuela Espejo", var_names[2:length(var_names)]), 
-          omit.stat = c("LL","ser","f", "rsq"), dep.var.caption = "", dep.var.labels.include = FALSE, 
+          omit.stat = c("LL","ser"), dep.var.caption = "", dep.var.labels.include = FALSE, 
           column.labels = c("Men", "Women"), column.separate = c(3,3), title = "")
 ```
 
 ```{r, echo=FALSE, results='asis'}
 stargazer(ols1_males, ols2_males, ols3_males, ols1_females, ols2_females, ols3_females, type = "latex", align = TRUE, 
-          keep = c("dis_id"), covariate.labels = c("Id holder"), omit.stat = c("LL","ser","f", "rsq"),
+          keep = c("dis_id"), covariate.labels = c("Id holder"), omit.stat = c("LL","ser"),
           dep.var.caption = "", dep.var.labels.include = FALSE, column.labels = c("Men", "Women"), column.separate = c(3,3))
 ```
 
