@@ -10,23 +10,27 @@ if(!require(readstata13)) install.packages("discap.table", repos = "http://cran.
 
 options(timeout=600) # we change the download timeout time to 600
 
-# We give the url a name
+# location of the data on github
 url <- "https://github.com/aquijanoruiz/disability_benefits_EC/raw/master/ENSANUT_datasets/BDD_ENSANUT_2018_STATA_.zip"
-# We create a temporary directory
+# creates a temporary directory
 td <- tempdir()
-# We create the placeholder file
+# creates a placeholder file
 tf <- tempfile(tmpdir=td, fileext = ".zip")
-# We download the data into the placeholder file
+# downloads the data into the placeholder file
 download.file(url,tf)
 
-# We can use this code to look at the files contained inside the zip file: unzip(tf, list=TRUE)$Name
+# shows the files contained inside the zip file: unzip(tf, list=TRUE)$Name
 people.f.name <- unzip(tf, list=TRUE)$Name[2] # The "personas" dataset
 people.f.path <- file.path(td, people.f.name)
-unzip(tf, files=people.f.name,exdir=td, overwrite=TRUE)
 
-people.f.path <- file.path(td, people.f.name)
-# We name the "personas" dataset people
+home.f.name <- unzip(tf, list=TRUE)$Name[3] # The "hogar" dataset
+home.f.path <- file.path(td, home.f.name)
+unzip(tf, files=c(people.f.name,home.f.name),exdir=td, overwrite=TRUE)
+
+# loads the dta files
 people <- read.dta13(people.f.path)
+home <- read.dta13(home.f.path)
 
-key.people <- data.frame(variable = names(people), # we can see the name of the variables
-                         label = attr(people,"var.labels"))
+# loads the variable descriptions
+key.people <- data.frame(variable = names(people), label = attr(people,"var.labels"))
+key.home <- data.frame(variable = names(home), label = attr(home,"var.labels"))
